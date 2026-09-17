@@ -1,0 +1,19 @@
+أسرع طريقة من الموبايل فقط — بدون Expo
+
+الخيار 1: GitHub Actions
+1) أنشئ Repository جديد على GitHub من المتصفح.
+2) ارفع ملفات هذا المشروع إلى الـRepository.
+3) افتح تبويب Actions.
+4) اختر Build Android APK.
+5) اضغط Run workflow.
+6) بعد اكتمال التشغيل افتح الـRun ثم Artifacts.
+7) نزّل Business-Finance-APK ثم استخرج app-debug.apk وثبته.
+
+الخيار 2: Codemagic
+1) سجل الدخول في codemagic.io بحساب GitHub.
+2) Add application واختر Repository المشروع.
+3) استخدم codemagic.yaml الموجود في المشروع.
+4) Run build.
+5) بعد انتهاء البناء حمّل app-debug.apk من Artifacts.
+
+لا يوجد Expo في المشروع.

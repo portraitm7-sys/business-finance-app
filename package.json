@@ -1,0 +1,21 @@
+{
+  "name": "business-finance-capacitor",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Black & Gold daily business finance tracker for Android",
+  "scripts": {
+    "android:add": "cap add android",
+    "android:sync": "cap sync android",
+    "android:open": "cap open android"
+  },
+  "dependencies": {
+    "@capacitor/android": "8.5.2",
+    "@capacitor/core": "8.5.2"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "8.5.2"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "appId": "com.business.financeapp",
+  "appName": "حسابات الشغل",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https"
+  },
+  "android": {
+    "backgroundColor": "#080808"
+  }
+}
