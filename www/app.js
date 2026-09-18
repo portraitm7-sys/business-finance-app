@@ -1,4 +1,3 @@
-
 const STORAGE_KEY='business_finance_capacitor_v1';
 
 const initialExpenseCategories=[
@@ -53,6 +52,45 @@ function esc(s=''){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt
 function displayDate(k){
   try{return new Intl.DateTimeFormat('ar-EG',{weekday:'long',day:'numeric',month:'long',year:'numeric'}).format(parseDateKey(k))}
   catch{return k}
+}
+function displayMonth(k){
+  const [y,m]=k.split('-').map(Number);
+  try{return new Intl.DateTimeFormat('ar-EG-u-nu-latn',{month:'long',year:'numeric'}).format(new Date(y,m-1,1))}
+  catch{return k}
+}
+function renderMonthCalendar(){
+  const [y,m]=state.monthKey.split('-').map(Number);
+  const first=new Date(y,m-1,1);
+  const daysInMonth=new Date(y,m,0).getDate();
+  const offset=(first.getDay()+1)%7;
+  const weekdays=['سبت','أحد','اثن','ثلا','أرب','خمي','جمع'];
+  const cells=[];
+  for(let i=0;i<offset;i++)cells.push('<div class="calendar-day empty-slot"></div>');
+  for(let d=1;d<=daysInMonth;d++){
+    const key=`${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const t=totals(key);
+    const has=t.exp>0||t.inc>0;
+    let cls='cal-empty';
+    if(has&&t.inc>t.exp)cls='cal-income';
+    else if(has&&t.exp>t.inc)cls='cal-expense';
+    else if(has)cls='cal-equal';
+    const today=key===dateKey()?' today':'';
+    cells.push(`<button class="calendar-day ${cls}${today}" data-action="open-calendar-day" data-date="${key}" aria-label="${key}">
+      <span class="day-number">${d}</span>
+      ${has?'<span class="day-dot"></span>':''}
+    </button>`);
+  }
+  return `
+    <div class="calendar-card">
+      <div class="calendar-weekdays">${weekdays.map(w=>`<div class="calendar-weekday">${w}</div>`).join('')}</div>
+      <div class="calendar-grid">${cells.join('')}</div>
+      <div class="calendar-legend">
+        <span><i class="legend-dot income"></i>إيرادات أعلى</span>
+        <span><i class="legend-dot expense"></i>مصاريف أعلى</span>
+        <span><i class="legend-dot current"></i>اليوم</span>
+      </div>
+      <div class="calendar-tip">اضغط على أي يوم لفتح اليومية وتعديل بياناته مباشرة</div>
+    </div>`;
 }
 
 let state={
@@ -225,8 +263,9 @@ function renderMonthly(){
   const m=monthStats();
   return `
     <div class="monthbar">
-      <button class="icon-square" data-action="next-month">‹</button><div class="month-title">${state.monthKey}</div><button class="icon-square" data-action="prev-month">›</button>
+      <button class="icon-square" data-action="next-month">‹</button><div class="month-title">${displayMonth(state.monthKey)}</div><button class="icon-square" data-action="prev-month">›</button>
     </div>
+    ${renderMonthCalendar()}
     <div class="kpis">
       <div class="kpi"><div class="kpi-label">المصاريف</div><div class="kpi-value">${money(m.exp)}</div></div>
       <div class="kpi"><div class="kpi-label">الإيرادات</div><div class="kpi-value">${money(m.inc)}</div></div>
@@ -333,6 +372,14 @@ document.addEventListener('click',e=>{
   else if(a==='save'){save(false)}
   else if(a==='prev-month'){shiftMonth(-1);render()}
   else if(a==='next-month'){shiftMonth(1);render()}
+  else if(a==='open-calendar-day'){
+    state.selectedDate=el.dataset.date;
+    state.monthKey=state.selectedDate.slice(0,7);
+    state.dailyType='expense';
+    state.screen='daily';
+    save();
+    render();
+  }
   else if(a==='reset-all'){
     if(confirm('سيتم حذف كل البيانات واليوميات المحفوظة. هل أنت متأكد؟')){
       localStorage.removeItem(STORAGE_KEY);
