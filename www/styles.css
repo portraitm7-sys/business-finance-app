@@ -48,6 +48,10 @@ linear-gradient(180deg,#080808,#0d0d0d)}
 .lock-wrap.open .delete-pop{display:block}
 .delete-btn{height:38px;min-width:74px;border-radius:9px;border:1px solid var(--red);background:#221010;color:#ffd3d3;font-weight:900;font-size:12px}
 .children{margin:8px 30px 3px 0;padding:8px;border:1px solid #2b2618;border-radius:14px;background:#11110f}
+.children-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:2px 2px 8px;margin-bottom:4px;border-bottom:1px dashed #342d1a}
+.children-label{font-size:12px;font-weight:950;color:var(--gold2)}
+.child-add-btn{width:42px;height:38px;border:1px solid var(--gold);border-radius:11px;background:#211c0f;color:var(--gold2);font-size:25px;font-weight:950;line-height:1}
+.child-add-btn:active{transform:scale(.96)}
 .remaining{margin-top:8px;padding:10px;border:1px dashed #4d4020;border-radius:12px;background:#12100b}
 .remaining-line{display:grid;grid-template-columns:auto 1fr;gap:8px;align-items:center}
 .remaining-label{font-size:13px;font-weight:950;color:var(--gold2)}

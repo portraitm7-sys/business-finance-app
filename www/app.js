@@ -199,7 +199,13 @@ function renderExpenseRows(){
         <button class="small-btn plus-btn" data-action="add-expense-after" data-cat="${cat.id}">+</button>
         ${lockHtml(`expense:${cat.id}`)}
       </div>
-      ${open?`<div class="children">${children||`<div class="empty-note">اضغط + لإضافة بند فرعي</div>`}</div>`:''}
+      ${open?`<div class="children">
+        <div class="children-head">
+          <span class="children-label">البنود الفرعية</span>
+          <button class="child-add-btn" data-action="add-child" data-cat="${cat.id}" aria-label="إضافة بند فرعي">+</button>
+        </div>
+        ${children||`<div class="empty-note">لا توجد بنود فرعية — اضغط + لإضافة بند</div>`}
+      </div>`:''}
     </div>`;
   }).join('');
 }
@@ -363,8 +369,25 @@ document.addEventListener('click',e=>{
   }
   else if(a==='add-child'){
     const id=el.dataset.cat;
-    state.expenseCategories=state.expenseCategories.map(c=>c.id===id?{...c,children:[...(c.children||[]),{id:uid('child'),name:'بند فرعي'}]}:c);
-    state.openExpenses[id]=true;rerenderSave();
+    const cat=state.expenseCategories.find(c=>c.id===id);
+    const isFirstChild=!!cat && !(cat.children||[]).length;
+    const childId=uid('child');
+    const d=ensureDay();
+    const oldParentAmount=d.expenses?.[id]??'';
+
+    state.expenseCategories=state.expenseCategories.map(c=>c.id===id
+      ?{...c,children:[...(c.children||[]),{id:childId,name:'بند فرعي'}]}
+      :c);
+
+    if(isFirstChild && num(oldParentAmount)>0){
+      if(!d.expenseChildren[id])d.expenseChildren[id]={};
+      d.expenseChildren[id][childId]=oldParentAmount;
+      delete d.expenses[id];
+    }
+
+    state.openExpenses[id]=true;
+    rerenderSave();
+    toast('تمت إضافة بند فرعي');
   }
   else if(a==='add-income'){
     state.incomeCategories.push({id:uid('inc'),name:'بند جديد',hasRemaining:false});rerenderSave();toast('تمت إضافة بند إيراد');
